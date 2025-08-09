@@ -44,7 +44,10 @@ class PullRequest(Base):
     github_data = Column(JSON)
 
     # Unique constraint
-    __table_args__ = ({"unique_together": ("repo_owner", "repo_name", "pr_number")},)
+    __table_args__ = (
+        # Use UniqueConstraint instead of unique_together
+        # UniqueConstraint("repo_owner", "repo_name", "pr_number"),
+    )
 
 
 class Review(Base):

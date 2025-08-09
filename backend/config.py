@@ -16,6 +16,11 @@ class Settings(BaseSettings):
     # Database Configuration
     database_url: str
 
+    # PostgreSQL Configuration (used by docker-compose)
+    postgres_user: Optional[str] = None
+    postgres_password: Optional[str] = None
+    postgres_db: Optional[str] = None
+
     # Redis Configuration
     redis_url: str
 

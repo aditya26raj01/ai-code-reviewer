@@ -65,9 +65,10 @@ async def health_check():
     # Check database
     try:
         from .models import get_db
+        from sqlalchemy import text
 
         db = next(get_db())
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         health_status["checks"]["database"] = "healthy"
         db.close()
     except Exception as e:

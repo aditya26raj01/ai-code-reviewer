@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Any, Optional
 from .base import BaseAgent, AgentResult
-from langchain.chat_models import ChatOpenAI, ChatAnthropic
+from langchain_community.chat_models import ChatOpenAI, ChatAnthropic
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import SystemMessage, HumanMessage
 import json
@@ -16,24 +16,21 @@ class ReviewerAgent(BaseAgent):
     def __init__(self):
         super().__init__("ReviewerAgent")
 
-        # Initialize models
+        # Initialize OpenAI models only
         self.models = {}
         if settings.openai_api_key:
+            # Primary model for reasoning and review
             self.models["gpt-4o-mini"] = ChatOpenAI(
                 model="gpt-4o-mini", api_key=settings.openai_api_key, temperature=0.2
             )
+            # Backup model for complex analysis
             self.models["gpt-4-turbo"] = ChatOpenAI(
                 model="gpt-4-turbo-preview",
                 api_key=settings.openai_api_key,
-                temperature=0.2,
+                temperature=0.3,
             )
-
-        if settings.anthropic_api_key:
-            self.models["claude-3.5-sonnet"] = ChatAnthropic(
-                model="claude-3-sonnet-20240229",
-                api_key=settings.anthropic_api_key,
-                temperature=0.2,
-            )
+        else:
+            raise ValueError("OpenAI API key is required for ReviewerAgent")
 
     async def execute(
         self,

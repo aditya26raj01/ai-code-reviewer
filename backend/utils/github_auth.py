@@ -31,10 +31,16 @@ class GitHubAuth:
         return self._private_key
 
     @property
+    def private_key_pem(self):
+        """Get private key as PEM string for JWT signing."""
+        with open(self.private_key_path, "r") as key_file:
+            return key_file.read()
+
+    @property
     def integration(self):
         """Get GitHub Integration instance."""
         if self._integration is None:
-            self._integration = GithubIntegration(self.app_id, self.private_key)
+            self._integration = GithubIntegration(self.app_id, self.private_key_pem)
         return self._integration
 
     def generate_jwt(self):
@@ -43,7 +49,7 @@ class GitHubAuth:
         now = int(time.time())
         payload = {"iat": now, "exp": now + 600, "iss": str(self.app_id)}  # 10 minutes
 
-        return jwt.encode(payload, self.private_key, algorithm="RS256")
+        return jwt.encode(payload, self.private_key_pem, algorithm="RS256")
 
     def get_installation_token(self, installation_id: int):
         """Get installation access token."""
